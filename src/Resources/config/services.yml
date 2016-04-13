@@ -1,0 +1,25 @@
+parameters:
+
+    szg_feed.elastic_search_items_provider_class: SZG\FeedBundle\Provider\ElasticSearchItemsProvider
+    szg_feed.elastic_search_searcher_class: SZG\FeedBundle\Searcher\ElasticaSearcher
+
+services:
+
+    szg_feed.elastic_search_items_provider:
+       parent: kunstmaan_node_search.search.abstract_elastica_searcher
+       class: "%szg_feed.elastic_search_searcher_class%"
+       public: false
+       calls:
+        - [ setIndexName, ["%kunstmaan_node_search.indexname%"]]
+        - [ setIndexType, ["%kunstmaan_node_search.indextype%"]]
+        - [ setLanguage, ["%defaultlocale%"]]
+
+    szg_feed.elastic_search_searcher:
+      class: "%szg_feed.elastic_search_items_provider_class%"
+      arguments: ["@szg_feed.elastic_search_items_provider"]
+
+    szg_feed.twig.feed_extension:
+      class: SZG\Services\Twig\FeedExtension
+      arguments: ["@szg_feed.elastic_search_items_provider"]
+      tags:
+        - { name: twig.extension }
