@@ -1,12 +1,12 @@
 <?php
 
-namespace SZG\FeedBundle;
+namespace SZG\KunstmaanFeedBundle;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use SZG\FeedBundle\Feed\ElasticSearch\CompilerPass\FeedCompilerPass;
+use SZG\KunstmaanFeedBundle\DependencyInjection\CompilerPass\FeedCompilerPass;
 
-class SZGKunstmaanFeedBundle extends Bundle
+class KunstmaanFeedBundle extends Bundle
 {
 
     public function build(ContainerBuilder $container)

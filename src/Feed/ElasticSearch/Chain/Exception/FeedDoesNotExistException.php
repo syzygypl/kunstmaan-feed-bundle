@@ -1,6 +1,6 @@
 <?php
 
-namespace SZG\FeedBundle\Feed\ElasticSearch\Chain\Exception;
+namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Chain\Exception;
 
 class FeedDoesNotExistException extends \Exception
 {

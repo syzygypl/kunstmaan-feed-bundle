@@ -1,11 +1,21 @@
 {
-    "name": "arsthanea/kunstmaan-feed-bundle",
-    "require": {
-        "arsthanea/kunstmaan-extra-bundle": "dev-master"
-    },
-    "autoload": {
-        "psr-4" : {
-            "SZG\\KunstmaanFeedBundle\\" : "src"
-        }
+  "name": "syzygypl/kunstmaan-feed-bundle",
+  "require": {
+    "arsthanea/kunstmaan-extra-bundle": "dev-master"
+  },
+  "require-dev": {
+    "friendsofsymfony/user-bundle": "2.0.*@dev"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mateusz Dołęga",
+      "email": "mdx@mdx.pl"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "SZG\\KunstmaanFeedBundle\\": "src/"
+    }
+  }
 }

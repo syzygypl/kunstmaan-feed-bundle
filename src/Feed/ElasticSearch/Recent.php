@@ -1,30 +1,26 @@
 <?php
 
-namespace SZG\FeedBundle\Feed\ElasticSearch;
+namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch;
 
 use Elastica\Query;
-use SZG\FeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
+use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
+use SZG\KunstmaanFeedBundle\DTO\QueryDefinition;
 
 /**
  * Class Recent
  * Alias: recent
- * 
- * @package SZG\FeedBundle\Feed\ElasticSearch
+ *
+ * @package SZG\KunstmaanFeedBundle\Feed\ElasticSearch
  */
 class Recent implements FeedElasticSearchInterface
 {
 
     /**
-     * @param Query      $query
-     * @param Query\Bool $elasticaQueryBool
-     *
-     * @return Query\Bool
+     * @param QueryDefinition $queryDefinition
      */
-    function modifyQuery(Query $query, Query\Bool $elasticaQueryBool = null)
+    public function modifyQuery(QueryDefinition $queryDefinition)
     {
-        $query->addSort(['created' => ['order' => 'desc']]);
-
-        return $elasticaQueryBool;
+        $queryDefinition->getQuery()->addSort(['created' => ['order' => 'desc']]);
     }
 
 }

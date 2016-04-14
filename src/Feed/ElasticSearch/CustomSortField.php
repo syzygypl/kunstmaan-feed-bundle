@@ -1,20 +1,21 @@
 <?php
 
-namespace SZG\FeedBundle\Feed\ElasticSearch;
+namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch;
 
 use Elastica\Query;
-use SZG\FeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
+use SZG\KunstmaanFeedBundle\DTO\QueryDefinition;
+use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
 
 /**
  * Class CustomSortField
- * @package SZG\FeedBundle\Feed\ElasticSearch
+ * @package SZG\KunstmaanFeedBundle\Feed\ElasticSearch
  *
- * @example You have to define custom feed service:
- *    szg_feed.feed.custom_sort_field_video:
- *       class: "%szg_feed.feed.custom_sort_field_class%"
- *        arguments: ["video", "desc"]
- *       tags:
- *           - { name: szg_feed.feed, alias: video }
+ * @example
+ * Configure custom feeds in config.yml
+ *     kunstmaan_feed:
+ *          custom:
+ *              title : 'asc'
+ *              rate_avg : 'desc'
  */
 class CustomSortField implements FeedElasticSearchInterface
 {
@@ -34,16 +35,11 @@ class CustomSortField implements FeedElasticSearchInterface
     }
 
     /**
-     * @param Query      $query
-     * @param Query\Bool $elasticaQueryBool
-     *
-     * @return Query\Bool|void
+     * @param QueryDefinition $queryDefinition
      */
-    function modifyQuery(Query $query, Query\Bool $elasticaQueryBool = null)
+    public function modifyQuery(QueryDefinition $queryDefinition)
     {
-        $query->addSort([$this->field => ['order' => $this->order]]);
-
-        return $elasticaQueryBool;
+        $queryDefinition->getQuery()->addSort([$this->field => ['order' => $this->order]]);
     }
 
     /**

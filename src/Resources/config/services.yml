@@ -1,25 +1,32 @@
 parameters:
 
-    szg_feed.elastic_search_items_provider_class: SZG\FeedBundle\Provider\ElasticSearchItemsProvider
-    szg_feed.elastic_search_searcher_class: SZG\FeedBundle\Searcher\ElasticaSearcher
+    szg_feed.elastic_search_items_provider_class: 'SZG\KunstmaanFeedBundle\Services\Provider\ElasticSearchItemsProvider'
+    szg_feed.elastic_search_items_provider_attrributes_normalizer_class: 'SZG\KunstmaanFeedBundle\Services\Provider\ElasticSearchItemProviderAttributesNormalizer'
+    szg_feed.elastic_search_searcher_class: 'SZG\KunstmaanFeedBundle\Services\Searcher\ElasticaSearcher'
 
 services:
 
-    szg_feed.elastic_search_items_provider:
+    szg_feed.elastic_search_searcher:
+       class: '%szg_feed.elastic_search_searcher_class%'
        parent: kunstmaan_node_search.search.abstract_elastica_searcher
-       class: "%szg_feed.elastic_search_searcher_class%"
        public: false
        calls:
-        - [ setIndexName, ["%kunstmaan_node_search.indexname%"]]
-        - [ setIndexType, ["%kunstmaan_node_search.indextype%"]]
-        - [ setLanguage, ["%defaultlocale%"]]
+          - [ setIndexName, ["%kunstmaan_node_search.indexname%"]]
+          - [ setIndexType, ["%kunstmaan_node_search.indextype%"]]
+          - [ setLanguage, ["%defaultlocale%"]]
 
-    szg_feed.elastic_search_searcher:
-      class: "%szg_feed.elastic_search_items_provider_class%"
-      arguments: ["@szg_feed.elastic_search_items_provider"]
+    szg_feed.elastic_search_items_provider:
+        class: "%szg_feed.elastic_search_items_provider_class%"
+        arguments: ['@szg_feed.elastic_search_searcher', '@szg_feed.elastic_search_items_provider_attrributes_normalizer', '@szg_feed.feed_chain']
+
+    szg_feed.elastic_search_items_provider_attrributes_normalizer:
+        class: "%szg_feed.elastic_search_items_provider_attrributes_normalizer_class%"
+        public: false
+        arguments: ["@kunstmaan_extra.content_category", '@szg_feed.feed_chain']
 
     szg_feed.twig.feed_extension:
-      class: SZG\Services\Twig\FeedExtension
-      arguments: ["@szg_feed.elastic_search_items_provider"]
-      tags:
-        - { name: twig.extension }
+        class: SZG\KunstmaanFeedBundle\Services\Twig\FeedExtension
+        arguments: ["@szg_feed.elastic_search_items_provider"]
+        public: false
+        tags:
+            - { name: twig.extension }

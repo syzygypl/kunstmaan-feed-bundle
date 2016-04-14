@@ -1,10 +1,10 @@
 <?php
 
-namespace SZG\FeedBundle\Feed\ElasticSearch\Abstracts;
+namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Abstracts;
 
 use Elastica\Filter;
 use Elastica\Query;
-use SZG\FeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
+use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
 
 abstract class RandomAbstract implements FeedElasticSearchInterface
 {

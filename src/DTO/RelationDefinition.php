@@ -1,9 +1,13 @@
 <?php
 
-namespace SZG\FeedBundle\Services\Searcher;
+namespace SZG\KunstmaanFeedBundle\DTO;
 
 use ArsThanea\KunstmaanExtraBundle\ContentCategory\Category;
 
+/**
+ * Class RelationDefinition
+ * @package SZG\KunstmaanFeedBundle\DTO
+ */
 class RelationDefinition implements \JsonSerializable
 {
     /**
@@ -14,7 +18,7 @@ class RelationDefinition implements \JsonSerializable
     /**
      * @var array
      */
-    private $tags;
+    private $tags = [];
 
     /**
      * @var array
@@ -24,11 +28,13 @@ class RelationDefinition implements \JsonSerializable
     /**
      * @param Category|null $category
      * @param array $tags
+     * @param array $exclude
      */
-    public function __construct(Category $category = null, array $tags = [])
+    public function __construct(Category $category = null, array $tags = null, array $exclude = null)
     {
         $this->category = $category;
         $this->tags = $tags;
+        $this->exclude = $exclude;
     }
 
     /**
@@ -73,8 +79,8 @@ class RelationDefinition implements \JsonSerializable
     {
         return [
             'category' => $this->category,
-            'tags'     => $this->tags,
-            'exclude'  => $this->exclude,
+            'tags' => $this->tags,
+            'exclude' => $this->exclude,
         ];
     }
 }

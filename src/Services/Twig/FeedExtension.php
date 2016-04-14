@@ -1,9 +1,8 @@
 <?php
 
-namespace SZG\Services\Twig;
+namespace SZG\KunstmaanFeedBundle\Services\Twig;
 
-use SZG\FeedBundle\Services\Provider\ElasticSearchItemsProvider;
-use SZG\FeedBundle\Services\Searcher\RelationDefinition;
+use SZG\KunstmaanFeedBundle\Services\Provider\ElasticSearchItemsProvider;
 
 class FeedExtension extends \Twig_Extension
 {
@@ -11,38 +10,88 @@ class FeedExtension extends \Twig_Extension
     /**
      * @var ElasticSearchItemsProvider
      */
-    private $contentProvider;
+    private $itemsProvider;
 
     /**
-     * @param ElasticSearchItemsProvider $contentProvider
+     * @param ElasticSearchItemsProvider $itemsProvider
      */
-    public function __construct(ElasticSearchItemsProvider $contentProvider)
+    public function __construct(ElasticSearchItemsProvider $itemsProvider)
     {
-        $this->contentProvider = $contentProvider;
+        $this->itemsProvider = $itemsProvider;
     }
 
 
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('get_items', [$this, 'getItems']),
+            new \Twig_SimpleFunction('get_feed_items', [$this, 'getFeedItems']),
+            new \Twig_SimpleFunction('get_*_feed', [$this, 'getFeedItemsByType']),
         ];
     }
 
     /**
-     * @param string $contentType
-     * @param string $feedType @see config/feeds.yml
-     * @param int $limit
-     * @param RelationDefinition|null $relation
+     * Get items by content type
      *
-     * @example Get ten most recent articles:    get_items('articles', 'most_recent', 10)
-     * @example Get random product:              get_items('product', 'random', 1)
+     * @param string $contentType
+     * @param array $options
+     *
+     * @example Get 100 recent articles:    get_feed_items('article')
+     * @example Get random product:         get_feed_items('product', {'limit':1, 'feed':'random'})
+     *      contentType: <search_type>
+     *      page:
+     *          + 1
+     *          - <int>
+     *      limit:
+     *          + 100
+     *          - <int>
+     *      category:
+     *          + null
+     *          - <HasNodeInterface>
+     *          - <Category>
+     *      tags:
+     *          + null
+     *          - 'tag1'
+     *          - {'tag1', 'tag2'}
+     *          - <Taggable>
+     *      tags_logic:
+     *          + 'any'
+     *          - 'all'
+     *          - 'few'
+     *      exclude:
+     *          + null
+     *          - {nodeId1, nodeId2, ...}
+     *      feed:
+     *          + 'recent',
+     *          - 'most_rates',
+     *          - 'random',
+     *          - 'recommended',
+     *          - 'valuable',
+     *          - 'valuable_random'
      *
      * @return \Elastica\Result[]
      */
-    public function getItems($contentType, $feedType, $limit = 3, RelationDefinition $relation = null)
+    public function getFeedItems($contentType, $options = [])
     {
-        return $this->contentProvider->getItems($contentType, $feedType, $limit, $relation);
+        return $this->itemsProvider->getFeedItems($contentType, $options);
+    }
+
+    /**
+     * @example get_random_news_feed({'limit':1})
+     * @example get_article_feed()
+     * @param string $type
+     * @param array $options
+     * @return \Elastica\Result[]
+     */
+    public function getFeedItemsByType($type, $options = [])
+    {
+        if (false !== strpos($type, "_")) {
+            list($feedType, $contentType) = explode('_', $type);
+        } else {
+            $feedType = null;
+            $contentType = $type;
+        }
+
+        return $this->itemsProvider->getFeedItems($contentType, $options + array_filter(['feed' => $feedType]));
     }
 
     /**

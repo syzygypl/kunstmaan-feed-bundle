@@ -1,21 +1,18 @@
 <?php
 
-namespace SZG\FeedBundle\Services\Searcher;
+namespace SZG\KunstmaanFeedBundle\Services\Searcher;
 
 use Elastica\Query;
-use Elastica\Query\Bool;
 use Elastica\Query\Term;
 use Elastica\Query\Terms;
 use Kunstmaan\NodeSearchBundle\Search\AbstractElasticaSearcher;
-use SZG\FeedBundle\Feed\ElasticSearch\Chain\ElasticSearchFeedChain;
-use SZG\FeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
-use SZG\FeedBundle\Services\RelationDefinition;
+use SZG\KunstmaanFeedBundle\DTO\QueryDefinition;
+use SZG\KunstmaanFeedBundle\DTO\TagLogic;
+use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
+use SZG\KunstmaanFeedBundle\DTO\RelationDefinition;
 
 class ElasticaSearcher extends AbstractElasticaSearcher
 {
-
-    /** @var ElasticSearchFeedChain */
-    private $feedChain;
 
     /**
      * @var FeedElasticSearchInterface
@@ -23,26 +20,37 @@ class ElasticaSearcher extends AbstractElasticaSearcher
     private $feed;
 
     /**
-     * @param $feed
+     * @var TagLogic
+     */
+    private $tagsLogic;
+
+    /**
+     * @param FeedElasticSearchInterface $feed
      *
      * @return $this
-     * @throws \SZG\FeedBundle\Feed\ElasticSearch\Chain\Exception\FeedDoesNotExistException
      */
-    public function setFeed($feed)
+    public function setFeed(FeedElasticSearchInterface $feed)
     {
-        if (is_string($feed)) {
-            $this->feed = $this->feedChain->getFeed($feed);
-        } elseif ($feed instanceof FeedElasticSearchInterface) {
-            $this->feed = $feed;
-        }
+        $this->feed = $feed;
+
+        return $this;
+    }
+
+    /**
+     * @param TagLogic $tagsLogic
+     * @return $this
+     */
+    public function setTagsLogic(TagLogic $tagsLogic)
+    {
+        $this->tagsLogic = $tagsLogic;
 
         return $this;
     }
 
     /**
      * @param RelationDefinition $query
-     * @param string             $lang
-     * @param string             $type
+     * @param string $lang
+     * @param string $type
      *
      * @return void
      */
@@ -52,28 +60,30 @@ class ElasticaSearcher extends AbstractElasticaSearcher
         $tags = $query->getTags();
         $exclude = $query->getExclude();
 
-        $elasticaQueryBool = (new Bool)->setMinimumNumberShouldMatch(1);
-
-        $elasticaQueryBool->addMust((new Term)->setTerm('lang', $lang));
-        $elasticaQueryBool->addMust((new Term)->setTerm('type', $type));
-        $elasticaQueryBool->addMust((new Term)->setTerm('view_roles', 'IS_AUTHENTICATED_ANONYMOUSLY'));
+        $bool = (new Query\BoolQuery())->setMinimumNumberShouldMatch(1);
+        $bool->addMust((new Term)->setTerm('lang', $lang));
+        $bool->addMust((new Term)->setTerm('type', $type));
+        $bool->addMust((new Term)->setTerm('view_roles', 'IS_AUTHENTICATED_ANONYMOUSLY'));
 
         // check if slug is non-empty: avoid filtering for home page
         if ($category && $category->getSlug()) {
-            $elasticaQueryBool->addShould((new Term)->setTerm('ancestors', $category->getNodeId()));
+            $bool->addShould((new Term)->setTerm('ancestors', $category->getNodeId()));
         }
 
         if ($tags) {
-            $minimum = max(1, ceil(sizeof($tags) / 3));
-            $elasticaQueryBool->addShould((new Terms)->setMinimumMatch($minimum)->setTerms('tags', $tags));
+            $tagLogic = $this->tagsLogic instanceof TagLogic ?: new TagLogic(TagLogic::LOGIC_FEW);
+            $minimum = $tagLogic->getMinMatch($tags);
+            $bool->addShould((new Terms)->setMinimumMatch($minimum)->setTerms('tags', $tags));
         }
 
         if (0 !== sizeof($exclude)) {
-            $elasticaQueryBool->addMustNot((new Terms)->setTerms('node_id', $exclude));
+            $bool->addMustNot((new Terms)->setTerms('node_id', $exclude));
         }
 
         $this->query = new Query();
-        $this->query->setQuery($this->feed->modifyQuery($this->query, $elasticaQueryBool));
+        $queryDefinition = new QueryDefinition($this->query, $bool);
+        $this->feed->modifyQuery($queryDefinition);
+        $queryDefinition->getQuery()->setQuery($queryDefinition->getFilterQuery());
 
     }
 

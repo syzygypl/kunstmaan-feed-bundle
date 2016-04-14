@@ -1,29 +1,27 @@
 <?php
 
-namespace SZG\FeedBundle\Feed\ElasticSearch;
+namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch;
 
 use Elastica\Filter;
 use Elastica\Query;
-use SZG\FeedBundle\Feed\ElasticSearch\Abstracts\RandomAbstract;
+use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Abstracts\RandomAbstract;
+use SZG\KunstmaanFeedBundle\DTO\QueryDefinition;
 
 /**
  * Class Random
  * Alias: random
  *
- * @package SZG\FeedBundle\Feed\ElasticSearch
+ * @package SZG\KunstmaanFeedBundle\Feed\ElasticSearch
  */
 class Random extends RandomAbstract
 {
 
     /**
-     * @param Query      $query
-     * @param Query\Bool $elasticaQueryBool
-     *
-     * @return Query\Bool
+     * @param QueryDefinition $queryDefinition
      */
-    public function modifyQuery(Query $query, Query\Bool $elasticaQueryBool)
+    public function modifyQuery(QueryDefinition $queryDefinition)
     {
-        return $this->setRandomScore($elasticaQueryBool);
+        $queryDefinition->setFilterQuery($this->setRandomScore($queryDefinition->getFilterQuery()));
     }
 
 }

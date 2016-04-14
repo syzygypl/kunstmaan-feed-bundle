@@ -1,17 +1,16 @@
 <?php
 
-namespace SZG\FeedBundle\Feed\ElasticSearch\Interfaces;
+namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces;
 
 use Elastica\Query;
+use SZG\KunstmaanFeedBundle\DTO\QueryDefinition;
 
 interface FeedElasticSearchInterface
 {
     /**
-     * @param Query      $query
-     * @param Query\Bool $elasticaQueryBool
-     *
-     * @return Query\Bool
+     * @param QueryDefinition $queryDefinition
+     * @return void
      */
-    function modifyQuery(Query $query, Query\Bool $elasticaQueryBool);
+    function modifyQuery(QueryDefinition $queryDefinition);
 
 }

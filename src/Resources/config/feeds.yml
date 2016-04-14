@@ -1,44 +1,24 @@
 parameters:
 
-    szg_feed.feed.custom_sort_field_class: SZG\FeedBundle\Feed\ElasticSearch\CustomSortField
-    szg_feed.feed.most_rates_class: SZG\FeedBundle\Feed\ElasticSearch\MostRates
-    szg_feed.feed.random_class: SZG\FeedBundle\Feed\ElasticSearch\Random
-    szg_feed.feed.recent_class: SZG\FeedBundle\Feed\ElasticSearch\Recent
-    szg_feed.feed.recommended_class: SZG\FeedBundle\Feed\ElasticSearch\Recommended
-    szg_feed.feed.valuable_class: SZG\FeedBundle\Feed\ElasticSearch\Valuable
-    szg_feed.feed.valuable_random_class: SZG\FeedBundle\Feed\ElasticSearch\ValuableRandom
+    szg_feed.feed.custom_sort_field_class: 'SZG\KunstmaanFeedBundle\Feed\ElasticSearch\CustomSortField'
+    szg_feed.feed.most_rates_class: 'SZG\KunstmaanFeedBundle\Feed\ElasticSearch\MostRates'
+    szg_feed.feed.random_class: 'SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Random'
+    szg_feed.feed.recent_class: 'SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Recent'
+    szg_feed.feed.recommended_class: 'SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Recommended'
+    szg_feed.feed.valuable_class: 'SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Valuable'
+    szg_feed.feed.valuable_random_class: 'SZG\KunstmaanFeedBundle\Feed\ElasticSearch\ValuableRandom'
 
 services:
 
     szg_feed.feed_chain:
-        class: SZG\FeedBundle\Feed\ElasticSearch\Chain\ElasticSearchFeedChain
-
-    szg_feed.feed.most_rates:
-        class: "%szg_feed.feed.most_rates_class%"
-        tags:
-          - { name: szg_feed.feed, alias: most_rates }
+        class: 'SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Chain\ElasticSearchFeedChain'
 
     szg_feed.feed.random:
-        class: "%szg_feed.feed.random_class%"
+        class: '%szg_feed.feed.random_class%'
         tags:
           - { name: szg_feed.feed, alias: random }
 
     szg_feed.feed.recent:
-        class: "%szg_feed.feed.recent_class%"
+        class: '%szg_feed.feed.recent_class%'
         tags:
           - { name: szg_feed.feed, alias: recent }
-
-    szg_feed.feed.recommended:
-        class: "%szg_feed.feed.recommended_class%"
-        tags:
-          - { name: szg_feed.feed, alias: recommended }
-
-    szg_feed.feed.valuable:
-        class: "%szg_feed.feed.valuable_class%"
-        tags:
-          - { name: szg_feed.feed, alias: valuable }
-
-    szg_feed.feed.valuable_random:
-        class: "%szg_feed.feed.valuable_random_class%"
-        tags:
-          - { name: szg_feed.feed, alias: valuable_random }
