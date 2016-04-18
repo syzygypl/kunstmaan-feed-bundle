@@ -47,8 +47,7 @@ class AppKernel extends Kernel
 Usage
 =====
 
-|---------------------------------------------------------------------------------------------------|
-|`article` below represents an indexed type. It may be define as search_type in page configuration. |
+`article` below represents an indexed type. It may be define as search_type in page configuration.
 
 ``` yml
 kunstmaan_node:
