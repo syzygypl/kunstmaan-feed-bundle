@@ -5,15 +5,15 @@ namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Chain;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Chain\Exception\FeedDoesNotExistException;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
 
-class ElasticSearchFeedChain extends \RecursiveArrayIterator
+class ElasticSearchFeedChain
 {
 
     /** @var FeedElasticSearchInterface[] */
-    private $children;
+    private $feeds;
 
     public function __construct()
     {
-        $this->children = [];
+        $this->feeds = [];
     }
 
     /**
@@ -22,7 +22,7 @@ class ElasticSearchFeedChain extends \RecursiveArrayIterator
      */
     public function addFeed(FeedElasticSearchInterface $feed, $alias)
     {
-        $this->children[$alias] = $feed;
+        $this->feeds[$alias] = $feed;
     }
 
     /**
@@ -36,7 +36,7 @@ class ElasticSearchFeedChain extends \RecursiveArrayIterator
             throw new FeedDoesNotExistException($alias);
         }
 
-        return $this->children[$alias];
+        return $this->feeds[$alias];
 
     }
 
@@ -46,7 +46,7 @@ class ElasticSearchFeedChain extends \RecursiveArrayIterator
      */
     public function exist($alias)
     {
-        return array_key_exists($alias, $this->children);
+        return array_key_exists($alias, $this->feeds);
     }
 
 }

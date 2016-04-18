@@ -6,6 +6,8 @@ use ArsThanea\KunstmaanExtraBundle\SiteTree\CurrentLocaleInterface;
 use Elastica\Query;
 use Elastica\Query\Term;
 use Elastica\Query\Terms;
+use Kunstmaan\AdminBundle\Helper\DomainConfigurationInterface;
+use Kunstmaan\NodeBundle\Entity\Node;
 use Kunstmaan\NodeSearchBundle\Search\AbstractElasticaSearcher;
 use SZG\KunstmaanFeedBundle\DTO\QueryDefinition;
 use SZG\KunstmaanFeedBundle\DTO\RelationDefinition;
@@ -20,10 +22,23 @@ class ElasticaSearcher extends AbstractElasticaSearcher
      */
     private $currentLocale;
 
-    public function __construct(CurrentLocaleInterface $currentLocale, $indexName, $indexType)
+    /**
+     * @var DomainConfigurationInterface
+     */
+    private $domainConfiguration;
+
+    /**
+     * @param CurrentLocaleInterface $currentLocale
+     * @param DomainConfigurationInterface $domainConfiguration
+     * @param $indexName
+     * @param $indexType
+     */
+    public function __construct(CurrentLocaleInterface $currentLocale, DomainConfigurationInterface $domainConfiguration, $indexName, $indexType)
     {
         parent::__construct();
         $this->currentLocale = $currentLocale;
+        $this->domainConfiguration = $domainConfiguration;
+
         $this->setIndexName($indexName);
         $this->setIndexType($indexType);
     }
@@ -73,11 +88,18 @@ class ElasticaSearcher extends AbstractElasticaSearcher
         $category = $query->getCategory();
         $tags = $query->getTags();
         $exclude = $query->getExclude();
+        $rootNode = $this->domainConfiguration->getRootNode();
 
         $bool = (new Query\BoolQuery())->setMinimumNumberShouldMatch(1);
         $bool->addMust((new Term)->setTerm('lang', $this->language));
         $bool->addMust((new Term)->setTerm('type', $type));
         $bool->addMust((new Term)->setTerm('view_roles', 'IS_AUTHENTICATED_ANONYMOUSLY'));
+
+        if ($rootNode instanceof Node) {
+            $root = new Term();
+            $root->setTerm('root_id', $rootNode->getId());
+            $bool->addMust($root);
+        }
 
         // check if slug is non-empty: avoid filtering for home page
         if ($category && $category->getSlug()) {

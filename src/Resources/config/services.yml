@@ -12,6 +12,7 @@ services:
        public: false
        arguments:
           - '@kunstmaan_extra.site_tree.current_locale'
+          - '@kunstmaan_admin.domain_configuration'
           - '%kunstmaan_node_search.indexname%'
           - '%kunstmaan_node_search.indextype%'
 
