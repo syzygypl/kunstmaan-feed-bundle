@@ -44,4 +44,12 @@ interface ElasticSearchItemProviderAttributesNormalizerInterface
      */
     function normalizeFeed(Options $options, $value);
 
+    /**
+     * @param Options $options
+     * @param mixed $value
+     *
+     * @return FeedElasticSearchInterface
+     */
+    function normalizeExcluded(Options $options, $value);
+
 }

@@ -2,16 +2,16 @@
 
 namespace SZG\KunstmaanFeedBundle\Services\Provider;
 
+use ArsThanea\KunstmaanExtraBundle\ContentCategory\Category;
 use ArsThanea\KunstmaanExtraBundle\ContentCategory\ContentCategoryInterface;
-use Entity\Category;
 use Kunstmaan\NodeBundle\Entity\HasNodeInterface;
 use Kunstmaan\TaggingBundle\Entity\Tag;
 use Kunstmaan\TaggingBundle\Entity\Taggable;
 use Symfony\Component\OptionsResolver\Options;
 use SZG\KunstmaanFeedBundle\DTO\TagLogic;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Chain\ElasticSearchFeedChain;
-use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Chain\Exception\FeedDoesNotExistException;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
+use SZG\KunstmaanFeedBundle\Services\Resolver\NodeIdResolverServiceInterface;
 
 /**
  * Class ElasticSearchItemProviderAttributesNormalizer
@@ -26,14 +26,19 @@ class ElasticSearchItemProviderAttributesNormalizer implements ElasticSearchItem
     /**  @var ElasticSearchFeedChain */
     private $feedChain;
 
+    /**  @var NodeIdResolverServiceInterface */
+    private $nodeIdResolver;
+
     /**
      * @param ContentCategoryInterface $contentCategory
      * @param ElasticSearchFeedChain $feedChain
+     * @param NodeIdResolverServiceInterface $nodeIdResolver
      */
-    public function __construct(ContentCategoryInterface $contentCategory, ElasticSearchFeedChain $feedChain)
+    public function __construct(ContentCategoryInterface $contentCategory, ElasticSearchFeedChain $feedChain, NodeIdResolverServiceInterface $nodeIdResolver)
     {
         $this->contentCategory = $contentCategory;
         $this->feedChain = $feedChain;
+        $this->nodeIdResolver = $nodeIdResolver;
     }
 
     /**
@@ -111,11 +116,31 @@ class ElasticSearchItemProviderAttributesNormalizer implements ElasticSearchItem
      * @param Options $options
      * @param FeedElasticSearchInterface|string $value
      * @return FeedElasticSearchInterface
-     * @throws FeedDoesNotExistException
      */
     public function normalizeFeed(Options $options, $value)
     {
         return $value instanceof FeedElasticSearchInterface ? $value : $this->feedChain->getFeed($value);
+    }
+
+    /**
+     * @param Options $options
+     * @param mixed $value
+     *
+     * @return FeedElasticSearchInterface
+     */
+    public function normalizeExcluded(Options $options, $value)
+    {
+        $value = is_array($value) ? $value : [$value];
+
+        $items = [];
+        foreach ($value as $item) {
+            $nodeId = $this->nodeIdResolver->resolve($item);
+            if (is_int($nodeId)) {
+                $items[] = $nodeId;
+            }
+        }
+
+        return $items;
     }
 
 }

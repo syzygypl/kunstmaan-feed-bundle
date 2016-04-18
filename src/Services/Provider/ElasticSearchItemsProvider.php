@@ -11,7 +11,7 @@ use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Chain\ElasticSearchFeedChain;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Recent;
 use SZG\KunstmaanFeedBundle\Services\Searcher\ElasticaSearcher;
 
-class ElasticSearchItemsProvider
+class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
 {
 
     /** @var ElasticaSearcher */
@@ -25,10 +25,10 @@ class ElasticSearchItemsProvider
 
     /**
      * @param ElasticaSearcher $searcher
-     * @param ElasticSearchItemProviderAttributesNormalizer $normalizer
+     * @param ElasticSearchItemProviderAttributesNormalizerInterface $normalizer
      * @param ElasticSearchFeedChain $feedChain
      */
-    public function __construct(ElasticaSearcher $searcher, ElasticSearchItemProviderAttributesNormalizer $normalizer, ElasticSearchFeedChain $feedChain)
+    public function __construct(ElasticaSearcher $searcher, ElasticSearchItemProviderAttributesNormalizerInterface $normalizer, ElasticSearchFeedChain $feedChain)
     {
         $this->searcher = $searcher;
         $this->normalizer = $normalizer;
@@ -39,9 +39,10 @@ class ElasticSearchItemsProvider
      * @param string $contentType
      *
      * @param array $options
+     * @param bool $returnDocuments
      * @return \Elastica\Result[]
      */
-    public function getFeedItems($contentType, array $options = [], $returnDocuments = true)
+    public function getFeedItems($contentType, array $options = [], $returnDocuments = false)
     {
         $options = $this->resolveGetItemsOptions($options);
         $relation = new RelationDefinition($options['category'], $options['tags'], $options['excluded']);
@@ -96,6 +97,10 @@ class ElasticSearchItemsProvider
 
         $resolver->setNormalizer('tagsLogic', function (Options $options, $value) {
             return $this->normalizer->normalizeTagLogic($options, $value);
+        });
+
+        $resolver->setNormalizer('excluded', function (Options $options, $value) {
+            return $this->normalizer->normalizeExcluded($options, $value);
         });
 
         return $resolver->resolve($options);

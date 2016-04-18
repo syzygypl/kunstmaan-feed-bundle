@@ -44,9 +44,21 @@ class AppKernel extends Kernel
 ```
 
 
-Step 3: Usage
--------------
+Usage
+=====
 
+|---------------------------------------------------------------------------------------------------|
+|`article` below represents an indexed type. It may be define as search_type in page configuration. |
+
+``` yml
+kunstmaan_node:
+    pages:
+        'AppBundle\Entity\Pages\ArticlePage':
+            ...
+            indexable: true
+            search_type: article
+```
+            
 ### TWIG
 
 ##### Most recent 100 articles:
@@ -54,8 +66,11 @@ Step 3: Usage
 {# Short notation, use defaults #}
 {% set articles = get_article_feed() %}
 
-{# Full notation #}
+{# Simple notation #}
 {% set articles = get_recent_article_feed({ limit: 100 }) %}
+
+{# full notation #}
+{% set articles = get_feed_items('article', { limit: 100, feed: 'recent' }) %}
 ```
 
 ##### Random product:
@@ -89,21 +104,22 @@ $articles = $this->get('szg_feed.elastic_search_items_provider')->getFeedItems('
 
 ```
 
-Step 4: Options reference
--------------------------
-| Option        | Type                      | Default       |
-| ------------: |---------------------------|---------------|
-| page          | int                       | 1             | 
-| limit         | int                       | 100           | 
-| category      | HasNodeInterface<br>Category| null | 
-| tags          | string<br>array<string><br>Taggable | null  |  
-| tags_logic    | enum(any,all,few)         | 'any'         | 
-| exclude       | array<nodeId>             | null          | 
-| feed          | enum(recent,random,...)   | 'recent'      | 
+Options reference
+=================
+
+| Option        | Type                                      | Description                                                           | Default       |
+| ------------: |-------------------------------------------|-----------------------------------------------------------------------|---------------|
+| page          | int                                       | Current page number                                                   | 1             |
+| limit         | int                                       | Items per page                                                        | 100           |
+| category      | HasNodeInterface<br>Category              | Page children<br>Category children                                    | null          |       
+| tags          | string<br>array<string><br>Taggable       | Single tag<br>Tags collection<br>Object implements Taggable interface | null          |
+| tags_logic    | 'any'<br>'all'<br>'few'                   | at least one must fit<br> all must fit<br>33% must fit                | 'any'         |    
+| excluded      | HasNodeInterface<br>Node<br>NodeTranslation<br>Category<br>Result<br>string *NodeId*<br>int *NodeId*<string>        | Array of elements to exclude from results. | null          |       
+| feed          | 'recent'<br>'random'<br><...custom_feed>  | Feed alias                                                            | 'recent'      |
 
 
-Step 5: Defining custom feed types
-----------------------------------
+Defining custom feed types
+==========================
 
 ### Sort single field custom feed:
 
@@ -147,7 +163,7 @@ szg_feed.feed.title:
       - { name: szg_feed.feed, alias: title }
 ```
 
-####  3. Use custom feed
+### Use custom feed
 
 ```jinja
 {% set articlesByTitle = get_title_article_feed() %}
