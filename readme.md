@@ -150,5 +150,5 @@ szg_feed.feed.title:
 ####  3. Use custom feed
 
 ```jinja
-{% set articlesByTitle = szg_title_article_feed() %}
+{% set articlesByTitle = get_title_article_feed() %}
 ```
