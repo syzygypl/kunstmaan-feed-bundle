@@ -134,10 +134,7 @@ class ElasticSearchItemProviderAttributesNormalizer implements ElasticSearchItem
 
         $items = [];
         foreach ($value as $item) {
-            $nodeId = $this->nodeIdResolver->resolve($item);
-            if (is_int($nodeId)) {
-                $items[] = $nodeId;
-            }
+            $items[] = $this->nodeIdResolver->resolve($item);
         }
 
         return $items;
