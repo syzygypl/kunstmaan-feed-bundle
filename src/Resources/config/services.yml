@@ -10,19 +10,24 @@ services:
        class: '%szg_feed.elastic_search_searcher_class%'
        parent: kunstmaan_node_search.search.abstract_elastica_searcher
        public: false
-       calls:
-          - [ setIndexName, ["%kunstmaan_node_search.indexname%"]]
-          - [ setIndexType, ["%kunstmaan_node_search.indextype%"]]
-          - [ setLanguage, ["%defaultlocale%"]]
+       arguments:
+          - '@kunstmaan_extra.site_tree.current_locale'
+          - '%kunstmaan_node_search.indexname%'
+          - '%kunstmaan_node_search.indextype%'
 
     szg_feed.elastic_search_items_provider:
         class: "%szg_feed.elastic_search_items_provider_class%"
-        arguments: ['@szg_feed.elastic_search_searcher', '@szg_feed.elastic_search_items_provider_attributes_normalizer', '@szg_feed.feed_chain']
+        arguments:
+          - '@szg_feed.elastic_search_searcher'
+          - '@szg_feed.elastic_search_items_provider_attributes_normalizer'
 
     szg_feed.elastic_search_items_provider_attributes_normalizer:
         class: "%szg_feed.elastic_search_items_provider_attributes_normalizer_class%"
         public: false
-        arguments: ["@kunstmaan_extra.content_category", '@szg_feed.feed_chain', '@szg_feed.services_resolver.node_id_resolver_service']
+        arguments:
+          - '@kunstmaan_extra.content_category'
+          - '@szg_feed.feed_chain'
+          - '@szg_feed.services_resolver.node_id_resolver_service'
 
     szg_feed.services_resolver.node_id_resolver_service:
         class: SZG\KunstmaanFeedBundle\Services\Resolver\NodeIdResolverService

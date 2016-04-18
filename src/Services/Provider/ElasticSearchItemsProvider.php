@@ -7,7 +7,6 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use SZG\KunstmaanFeedBundle\DTO\RelationDefinition;
 use SZG\KunstmaanFeedBundle\DTO\TagLogic;
-use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Chain\ElasticSearchFeedChain;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Recent;
 use SZG\KunstmaanFeedBundle\Services\Searcher\ElasticaSearcher;
 
@@ -20,19 +19,14 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
     /** @var ElasticSearchItemProviderAttributesNormalizer */
     private $normalizer;
 
-    /** @var ElasticSearchFeedChain */
-    private $feedChain;
-
     /**
      * @param ElasticaSearcher $searcher
      * @param ElasticSearchItemProviderAttributesNormalizerInterface $normalizer
-     * @param ElasticSearchFeedChain $feedChain
      */
-    public function __construct(ElasticaSearcher $searcher, ElasticSearchItemProviderAttributesNormalizerInterface $normalizer, ElasticSearchFeedChain $feedChain)
+    public function __construct(ElasticaSearcher $searcher, ElasticSearchItemProviderAttributesNormalizerInterface $normalizer)
     {
         $this->searcher = $searcher;
         $this->normalizer = $normalizer;
-        $this->feedChain = $feedChain;
     }
 
     /**

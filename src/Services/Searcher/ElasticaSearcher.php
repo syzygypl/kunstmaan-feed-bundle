@@ -2,17 +2,31 @@
 
 namespace SZG\KunstmaanFeedBundle\Services\Searcher;
 
+use ArsThanea\KunstmaanExtraBundle\SiteTree\CurrentLocaleInterface;
 use Elastica\Query;
 use Elastica\Query\Term;
 use Elastica\Query\Terms;
 use Kunstmaan\NodeSearchBundle\Search\AbstractElasticaSearcher;
 use SZG\KunstmaanFeedBundle\DTO\QueryDefinition;
+use SZG\KunstmaanFeedBundle\DTO\RelationDefinition;
 use SZG\KunstmaanFeedBundle\DTO\TagLogic;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
-use SZG\KunstmaanFeedBundle\DTO\RelationDefinition;
 
 class ElasticaSearcher extends AbstractElasticaSearcher
 {
+
+    /**
+     * @var CurrentLocaleInterface
+     */
+    private $currentLocale;
+
+    public function __construct(CurrentLocaleInterface $currentLocale, $indexName, $indexType)
+    {
+        parent::__construct();
+        $this->currentLocale = $currentLocale;
+        $this->setIndexName($indexName);
+        $this->setIndexType($indexType);
+    }
 
     /**
      * @var FeedElasticSearchInterface
@@ -61,7 +75,7 @@ class ElasticaSearcher extends AbstractElasticaSearcher
         $exclude = $query->getExclude();
 
         $bool = (new Query\BoolQuery())->setMinimumNumberShouldMatch(1);
-        $bool->addMust((new Term)->setTerm('lang', $lang));
+        $bool->addMust((new Term)->setTerm('lang', $this->language));
         $bool->addMust((new Term)->setTerm('type', $type));
         $bool->addMust((new Term)->setTerm('view_roles', 'IS_AUTHENTICATED_ANONYMOUSLY'));
 
@@ -85,6 +99,17 @@ class ElasticaSearcher extends AbstractElasticaSearcher
         $this->feed->modifyQuery($queryDefinition);
         $queryDefinition->getQuery()->setQuery($queryDefinition->getFilterQuery());
 
+    }
+
+    /**
+     * @param int|null $offset
+     * @param int|null $size
+     * @return \Elastica\ResultSet
+     */
+    public function search($offset = null, $size = null)
+    {
+        $this->language = $this->currentLocale->getCurrentLocale();
+        return parent::search($offset, $size);
     }
 
 }
