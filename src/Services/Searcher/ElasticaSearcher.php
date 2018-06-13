@@ -104,13 +104,13 @@ class ElasticaSearcher extends AbstractElasticaSearcher
 
         // check if slug is non-empty: avoid filtering for home page
         if ($category && $category->getSlug()) {
-            $bool->addShould((new Term)->setRawTerm(['ancestors' => $category->getNodeId()]));
+            $bool->addMust((new Term)->setRawTerm(['ancestors' => $category->getNodeId()]));
         }
 
         if ($tags) {
             $tagLogic = $this->tagsLogic instanceof TagLogic ?: new TagLogic(TagLogic::LOGIC_FEW);
             $minimum = $tagLogic->getMinMatch($tags);
-            $bool->addShould((new Terms)->setMinimumMatch($minimum)->setTerms('tags', $tags));
+            $bool->addMust((new Terms)->setMinimumMatch($minimum)->setTerms('tags', $tags));
         }
 
         if (0 !== count($exclude)) {
