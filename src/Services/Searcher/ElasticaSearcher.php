@@ -6,6 +6,7 @@ use ArsThanea\KunstmaanExtraBundle\SiteTree\CurrentLocaleInterface;
 use Elastica\Query;
 use Elastica\Query\Term;
 use Elastica\Query\Terms;
+use Elastica\ResultSet;
 use Kunstmaan\AdminBundle\Helper\DomainConfigurationInterface;
 use Kunstmaan\NodeBundle\Entity\Node;
 use Kunstmaan\NodeSearchBundle\Search\AbstractElasticaSearcher;
@@ -78,22 +79,22 @@ class ElasticaSearcher extends AbstractElasticaSearcher
 
     /**
      * @param RelationDefinition $query
-     * @param string $lang
      * @param string $type
      *
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \Exception
      */
-    public function defineSearch($query, $lang, $type)
+    public function defineSearch($query, $type)
     {
         $category = $query->getCategory();
         $tags = $query->getTags();
         $exclude = $query->getExclude();
         $rootNode = $this->domainConfiguration->getRootNode();
 
-        $bool = (new Query\BoolQuery())->setMinimumNumberShouldMatch(1);
-        $bool->addMust((new Term)->setTerm('lang', $this->language));
-        $bool->addMust((new Term)->setTerm('type', $type));
-        $bool->addMust((new Term)->setTerm('view_roles', 'IS_AUTHENTICATED_ANONYMOUSLY'));
+        $bool = (new Query\BoolQuery());
+        $bool->addMust((new Term)->setRawTerm(['type' => $type]));
+        $bool->addMust((new Term)->setRawTerm(['view_roles' => 'IS_AUTHENTICATED_ANONYMOUSLY']));
 
         if ($rootNode instanceof Node) {
             $root = new Term();
@@ -103,7 +104,7 @@ class ElasticaSearcher extends AbstractElasticaSearcher
 
         // check if slug is non-empty: avoid filtering for home page
         if ($category && $category->getSlug()) {
-            $bool->addShould((new Term)->setTerm('ancestors', $category->getNodeId()));
+            $bool->addShould((new Term)->setRawTerm(['ancestors' => $category->getNodeId()]));
         }
 
         if ($tags) {
@@ -112,7 +113,7 @@ class ElasticaSearcher extends AbstractElasticaSearcher
             $bool->addShould((new Terms)->setMinimumMatch($minimum)->setTerms('tags', $tags));
         }
 
-        if (0 !== sizeof($exclude)) {
+        if (0 !== count($exclude)) {
             $bool->addMustNot((new Terms)->setTerms('node_id', $exclude));
         }
 
@@ -126,7 +127,7 @@ class ElasticaSearcher extends AbstractElasticaSearcher
     /**
      * @param int|null $offset
      * @param int|null $size
-     * @return \Elastica\ResultSet
+     * @return ResultSet
      */
     public function search($offset = null, $size = null)
     {
