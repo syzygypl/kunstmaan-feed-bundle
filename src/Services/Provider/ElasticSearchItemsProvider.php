@@ -70,7 +70,7 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
         $resolver->setDefaults([
             'limit' => 100,
             'feed' => new Recent(),
-            'excluded' => null,
+            'excluded' => [],
             'page' => 1,
             'category' => null,
             'tags' => null,
