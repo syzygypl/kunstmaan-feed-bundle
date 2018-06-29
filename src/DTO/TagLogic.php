@@ -42,9 +42,9 @@ class TagLogic
     {
         switch ((string)$this) {
             case TagLogic::LOGIC_ALL :
-                return sizeof($tags);
+                return count($tags);
             case TagLogic::LOGIC_FEW :
-                return max(1, ceil(sizeof($tags) / 3));
+                return max(1, ceil(count($tags) / 3));
             case TagLogic::LOGIC_ANY :
                 return 1;
         }

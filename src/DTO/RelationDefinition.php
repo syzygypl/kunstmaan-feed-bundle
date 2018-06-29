@@ -24,17 +24,24 @@ class RelationDefinition implements \JsonSerializable
      * @var array
      */
     private $exclude = [];
+    
+    /**
+     * @var null
+     */
+    private $extra;
 
     /**
      * @param Category|null $category
      * @param array $tags
      * @param array $exclude
+     * @param mixed $extra
      */
-    public function __construct(Category $category = null, array $tags = null, array $exclude = null)
+    public function __construct(Category $category = null, array $tags = null, array $exclude = null, $extra = null)
     {
         $this->category = $category;
         $this->tags = $tags;
         $this->exclude = $exclude;
+        $this->extra = $extra;
     }
 
     /**
@@ -73,6 +80,25 @@ class RelationDefinition implements \JsonSerializable
     }
 
     /**
+     * @return null
+     */
+    public function getExtra()
+    {
+        return $this->extra;
+    }
+
+    /**
+     * @param null $extra
+     *
+     * @return RelationDefinition
+     */
+    public function setExtra($extra)
+    {
+        $this->extra = $extra;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     function jsonSerialize()
@@ -81,6 +107,7 @@ class RelationDefinition implements \JsonSerializable
             'category' => $this->category,
             'tags' => $this->tags,
             'exclude' => $this->exclude,
+            'extra' => $this->extra,
         ];
     }
 }

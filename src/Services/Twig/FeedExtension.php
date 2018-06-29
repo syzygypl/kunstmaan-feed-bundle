@@ -67,6 +67,9 @@ class FeedExtension extends \Twig_Extension
      *          - 'recommended',
      *          - 'valuable',
      *          - 'valuable_random'
+     *      extra:
+     *          + null
+     *          - mixed
      *
      * @return \Elastica\Result[]
      */
@@ -91,7 +94,9 @@ class FeedExtension extends \Twig_Extension
             $contentType = $type;
         }
 
-        return $this->itemsProvider->getFeedItems($contentType, $options + array_filter(['feed' => $feedType]));
+        $options = array_merge($options, array_filter(['feed' => $feedType]));
+
+        return $this->itemsProvider->getFeedItems($contentType, $options);
     }
 
     /**

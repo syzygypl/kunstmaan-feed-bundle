@@ -2,7 +2,7 @@
 
 namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch;
 
-use Elastica\Query;
+use SZG\KunstmaanFeedBundle\DTO\RelationDefinition;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
 use SZG\KunstmaanFeedBundle\DTO\QueryDefinition;
 
@@ -17,8 +17,9 @@ class Recent implements FeedElasticSearchInterface
 
     /**
      * @param QueryDefinition $queryDefinition
+     * @param RelationDefinition $relationDefinition
      */
-    public function modifyQuery(QueryDefinition $queryDefinition)
+    public function modifyQuery(QueryDefinition $queryDefinition, RelationDefinition $relationDefinition)
     {
         $queryDefinition->getQuery()->addSort(['created' => ['order' => 'desc']]);
     }

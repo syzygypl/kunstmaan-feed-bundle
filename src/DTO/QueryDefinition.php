@@ -39,7 +39,7 @@ class QueryDefinition
     }
 
     /**
-     * @return Query\AbstractQuery
+     * @return Query\AbstractQuery|Query\BoolQuery
      */
     public function getFilterQuery()
     {

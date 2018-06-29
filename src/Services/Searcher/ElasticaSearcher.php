@@ -119,7 +119,7 @@ class ElasticaSearcher extends AbstractElasticaSearcher
 
         $this->query = new Query();
         $queryDefinition = new QueryDefinition($this->query, $bool);
-        $this->feed->modifyQuery($queryDefinition);
+        $this->feed->modifyQuery($queryDefinition, $query);
         $queryDefinition->getQuery()->setQuery($queryDefinition->getFilterQuery());
 
     }

@@ -39,7 +39,7 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
     public function getFeedItems($contentType, array $options = [], $returnDocuments = false)
     {
         $options = $this->resolveGetItemsOptions($options);
-        $relation = new RelationDefinition($options['category'], $options['tags'], $options['excluded']);
+        $relation = new RelationDefinition($options['category'], $options['tags'], $options['excluded'], $options['extra']);
         $offset = ($options['page'] - 1) * $options['limit'];
         $resultSet = $this->searcher
             ->setFeed($options['feed'])
@@ -74,7 +74,8 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
             'page' => 1,
             'category' => null,
             'tags' => null,
-            'tagsLogic' => new TagLogic(TagLogic::LOGIC_ANY)
+            'tagsLogic' => new TagLogic(TagLogic::LOGIC_ANY),
+            'extra' => null
         ]);
 
         $resolver->setNormalizer('feed', function (Options $options, $value) {

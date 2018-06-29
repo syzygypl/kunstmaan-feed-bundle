@@ -2,7 +2,6 @@
 
 namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Abstracts;
 
-use Elastica\Filter;
 use Elastica\Query;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Interfaces\FeedElasticSearchInterface;
 

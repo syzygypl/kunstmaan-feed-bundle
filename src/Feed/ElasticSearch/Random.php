@@ -2,8 +2,7 @@
 
 namespace SZG\KunstmaanFeedBundle\Feed\ElasticSearch;
 
-use Elastica\Filter;
-use Elastica\Query;
+use SZG\KunstmaanFeedBundle\DTO\RelationDefinition;
 use SZG\KunstmaanFeedBundle\Feed\ElasticSearch\Abstracts\RandomAbstract;
 use SZG\KunstmaanFeedBundle\DTO\QueryDefinition;
 
@@ -18,8 +17,9 @@ class Random extends RandomAbstract
 
     /**
      * @param QueryDefinition $queryDefinition
+     * @param RelationDefinition $relationDefinition
      */
-    public function modifyQuery(QueryDefinition $queryDefinition)
+    public function modifyQuery(QueryDefinition $queryDefinition, RelationDefinition $relationDefinition)
     {
         $queryDefinition->setFilterQuery($this->setRandomScore($queryDefinition->getFilterQuery()));
     }

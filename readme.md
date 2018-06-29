@@ -106,15 +106,16 @@ $articles = $this->get('szg_feed.elastic_search_items_provider')->getFeedItems('
 Options reference
 =================
 
-| Option        | Type                                      | Description                                                           | Default       |
-| ------------: |-------------------------------------------|-----------------------------------------------------------------------|---------------|
-| page          | int                                       | Current page number                                                   | 1             |
-| limit         | int                                       | Items per page                                                        | 100           |
-| category      | HasNodeInterface<br>Category              | Page children<br>Category children                                    | null          |       
-| tags          | string<br>array<string><br>Taggable       | Single tag<br>Tags collection<br>Object implements Taggable interface | null          |
-| tags_logic    | 'any'<br>'all'<br>'few'                   | at least one must fit<br> all must fit<br>33% must fit                | 'any'         |    
-| excluded      | HasNodeInterface<br>Node<br>NodeTranslation<br>Category<br>Result<br>string *NodeId*<br>int *NodeId*<string>        | Array of elements to exclude from results. | null          |       
-| feed          | 'recent'<br>'random'<br><...custom_feed>  | Feed alias                                                            | 'recent'      |
+| Option        | Type                                      | Description                                                              | Default       |
+| ------------: |-------------------------------------------|--------------------------------------------------------------------------|---------------|
+| page          | int                                       | Current page number                                                      | 1             |
+| limit         | int                                       | Items per page                                                           | 100           |
+| category      | HasNodeInterface<br>Category              | Page children<br>Category children                                       | null          |       
+| tags          | string<br>array<string><br>Taggable       | Single tag<br>Tags collection<br>Object implements Taggable interface    | null          |
+| tags_logic    | 'any'<br>'all'<br>'few'                   | at least one must fit<br> all must fit<br>33% must fit                   | 'any'         |    
+| excluded      | HasNodeInterface<br>Node<br>NodeTranslation<br>Category<br>Result<br>string *NodeId*<br>int *NodeId*<string>         | Array of elements to exclude from results. | null          |       
+| feed          | 'recent'<br>'random'<br><...custom_feed>  | Feed alias                                                               | 'recent'      |
+| extra         | mixed                                     | You can pass any data to RelationDefinition and use it for custom query  |  null         |
 
 
 Defining custom feed types
