@@ -2,9 +2,7 @@
 
 namespace SZG\KunstmaanFeedBundle\Services\Provider;
 
-use ArsThanea\KunstmaanExtraBundle\ContentCategory\Category;
 use ArsThanea\KunstmaanExtraBundle\ContentCategory\ContentCategoryInterface;
-use Kunstmaan\NodeBundle\Entity\HasNodeInterface;
 use Kunstmaan\TaggingBundle\Entity\Tag;
 use Kunstmaan\TaggingBundle\Entity\Taggable;
 use Symfony\Component\OptionsResolver\Options;
@@ -59,7 +57,7 @@ class ElasticSearchItemProviderAttributesNormalizer implements ElasticSearchItem
     /**
      * @param Options $options
      * @param mixed $value
-     * @return Category|null
+     * @return int
      */
     public function normalizeCategory(Options $options, $value)
     {
@@ -67,15 +65,7 @@ class ElasticSearchItemProviderAttributesNormalizer implements ElasticSearchItem
             return null;
         }
 
-        if ($value instanceof Category) {
-            return $value;
-        }
-
-        if ($value instanceof HasNodeInterface) {
-            return $this->contentCategory->getCurrentCategory($value);
-        }
-
-        return null;
+        return $this->nodeIdResolver->resolve($value);
     }
 
     /**
