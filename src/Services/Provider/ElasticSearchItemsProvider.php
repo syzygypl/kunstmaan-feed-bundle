@@ -3,6 +3,7 @@
 namespace SZG\KunstmaanFeedBundle\Services\Provider;
 
 use Elastica\Result;
+use Elastica\ResultSet;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use SZG\KunstmaanFeedBundle\DTO\RelationDefinition;
@@ -34,7 +35,7 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
      *
      * @param array $options
      * @param bool $returnDocuments
-     * @return \Elastica\Result[]
+     * @return \Elastica\Result[]|ResultSet
      */
     public function getFeedItems($contentType, array $options = [], $returnDocuments = false)
     {
@@ -47,6 +48,10 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
             ->setData($relation)
             ->setContentType($contentType)
             ->search($offset, $options['limit']);
+
+        if($options['returnRawResultSet']){
+            return $resultSet;
+        }
 
         $results = $resultSet->getResults();
 
@@ -75,6 +80,7 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
             'category' => null,
             'tags' => null,
             'tagsLogic' => new TagLogic(TagLogic::LOGIC_ANY),
+            'returnRawResultSet' => false,
             'extra' => null
         ]);
 

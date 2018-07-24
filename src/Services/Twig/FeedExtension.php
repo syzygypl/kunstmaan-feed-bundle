@@ -67,6 +67,8 @@ class FeedExtension extends \Twig_Extension
      *          - 'recommended',
      *          - 'valuable',
      *          - 'valuable_random'
+     *      returnRawResultSet:
+     *          + false
      *      extra:
      *          + null
      *          - mixed
