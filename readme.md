@@ -115,7 +115,8 @@ Options reference
 | tags_logic    | 'any'<br>'all'<br>'few'                   | at least one must fit<br> all must fit<br>33% must fit                   | 'any'         |    
 | excluded      | HasNodeInterface<br>Node<br>NodeTranslation<br>Category<br>Result<br>string *NodeId*<br>int *NodeId*<string>         | Array of elements to exclude from results. | null          |       
 | feed          | 'recent'<br>'random'<br><...custom_feed>  | Feed alias                                                               | 'recent'      |
-| extra         | mixed                                     | You can pass any data to RelationDefinition and use it for custom query  |  null         |
+| returnRawResultSet | bool                                 | Return raw result set                                                    | false         |
+| extra         | mixed                                     | You can pass any data to RelationDefinition and use it for custom query  | null          |
 
 
 Defining custom feed types
