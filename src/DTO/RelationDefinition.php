@@ -11,7 +11,7 @@ use ArsThanea\KunstmaanExtraBundle\ContentCategory\Category;
 class RelationDefinition implements \JsonSerializable
 {
     /**
-     * @var Category
+     * @var mixed
      */
     private $category;
 
@@ -31,12 +31,12 @@ class RelationDefinition implements \JsonSerializable
     private $extra;
 
     /**
-     * @param Category|null $category
+     * @param mixed $category
      * @param array $tags
      * @param array $exclude
      * @param mixed $extra
      */
-    public function __construct(Category $category = null, array $tags = null, array $exclude = null, $extra = null)
+    public function __construct($category = null, array $tags = null, array $exclude = null, $extra = null)
     {
         $this->category = $category;
         $this->tags = $tags;
