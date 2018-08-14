@@ -41,7 +41,7 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
     {
         $options = $this->resolveGetItemsOptions($options);
         $relation = new RelationDefinition($options['category'], $options['tags'], $options['excluded'], $options['extra']);
-        $offset = ($options['page'] - 1) * $options['limit'];
+        $offset = $this->getOffset($options);
         $resultSet = $this->searcher
             ->setFeed($options['feed'])
             ->setTagsLogic($options['tagsLogic'])
@@ -81,6 +81,7 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
             'tags' => null,
             'tagsLogic' => new TagLogic(TagLogic::LOGIC_ANY),
             'returnRawResultSet' => false,
+            'offsetOverride' => null,
             'extra' => null
         ]);
 
@@ -105,6 +106,18 @@ class ElasticSearchItemsProvider implements ElasticSearchItemsProviderInterface
         });
 
         return $resolver->resolve($options);
+    }
+
+    /**
+     * @param array $options
+     * @return int
+     */
+    private function getOffset(array $options)
+    {
+        $offset = null === $options['offsetOverride']
+            ? ($options['page'] - 1) * $options['limit']
+            : (int)$options['offsetOverride'];
+        return $offset;
     }
 
 }

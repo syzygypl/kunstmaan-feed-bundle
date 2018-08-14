@@ -116,6 +116,7 @@ Options reference
 | excluded      | HasNodeInterface<br>Node<br>NodeTranslation<br>Category<br>Result<br>string *NodeId*<br>int *NodeId*<string>         | Array of elements to exclude from results. | null          |       
 | feed          | 'recent'<br>'random'<br><...custom_feed>  | Feed alias                                                               | 'recent'      |
 | returnRawResultSet | bool                                 | Return raw result set                                                    | false         |
+| offsetOverride | int | null                               | Override offset counted by page limit and page number by default                   | null          |
 | extra         | mixed                                     | You can pass any data to RelationDefinition and use it for custom query  | null          |
 
 
