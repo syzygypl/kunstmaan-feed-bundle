@@ -93,8 +93,8 @@ class ElasticaSearcher extends AbstractElasticaSearcher
         $rootNode = $this->domainConfiguration->getRootNode();
 
         $bool = (new Query\BoolQuery());
-        $bool->addMust((new Term)->setRawTerm(['type' => $type]));
-        $bool->addMust((new Term)->setRawTerm(['view_roles' => 'IS_AUTHENTICATED_ANONYMOUSLY']));
+        $bool->addMust((new Term())->setRawTerm(['type' => $type]));
+        $bool->addMust((new Term())->setRawTerm(['view_roles' => 'IS_AUTHENTICATED_ANONYMOUSLY']));
 
         if ($rootNode instanceof Node) {
             $root = new Term();
@@ -103,17 +103,17 @@ class ElasticaSearcher extends AbstractElasticaSearcher
         }
 
         if ($category) {
-            $bool->addMust((new Term)->setRawTerm(['ancestors' => $category]));
+            $bool->addMust((new Term())->setRawTerm(['ancestors' => $category]));
         }
 
         if ($tags) {
             $tagLogic = $this->tagsLogic instanceof TagLogic ?: new TagLogic(TagLogic::LOGIC_FEW);
             $minimum = $tagLogic->getMinMatch($tags);
-            $bool->addMust((new Terms)->setMinimumMatch($minimum)->setTerms('tags', $tags));
+            $bool->addMust((new Terms('tags'))->setMinimumMatch($minimum)->setTerms($tags));
         }
 
         if (0 !== count($exclude)) {
-            $bool->addMustNot((new Terms)->setTerms('node_id', $exclude));
+            $bool->addMustNot((new Terms('node_id'))->setTerms($exclude));
         }
 
         $this->query = new Query();
